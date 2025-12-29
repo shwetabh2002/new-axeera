@@ -25,10 +25,25 @@ interface SmoothScrollProviderProps {
  * - Tracks scroll progress globally
  * - Updates the 3D scene based on scroll position
  * - Respects user preferences for reduced motion
+ * - Scrolls to top on page refresh
  */
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const lenisRef = useRef<Lenis | null>(null);
   const reducedMotion = useReducedMotion();
+
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    // Disable browser's automatic scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Scroll to top immediately
+    window.scrollTo(0, 0);
+    
+    // Reset scroll progress state
+    setState({ scrollProgress: 0, activeScene: 0 });
+  }, []);
 
   useEffect(() => {
     // Skip smooth scroll if user prefers reduced motion
